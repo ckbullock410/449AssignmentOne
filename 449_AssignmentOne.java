@@ -5,7 +5,9 @@ public class 449_AssignmentOne {
     int [] partialAssignments = new int[8];     //do these with hashmaps probably
     int [] forbiddenAssignments = new int[8];
     int [] tooNearPenalties = new int[8];
-
+    String[][] pairedMachines = new String[8][2]; // Keeping the machines and their associated tasks in an array with each element
+                                                 // being an array that contains the machine and its task
+    
     int [][] penaltiesArray = new int[8];       //will need to rearrange this into a tree for branch and bound
     for (int i = 0; i < 8; i ++){
         penaltiesArray[i] = new int[8];
@@ -76,7 +78,21 @@ public class 449_AssignmentOne {
         * if not invalid call display function
         */
     }
-
+    
+    // This method will be used to get the indices for the machine-task penalties
+    private int convertLetterToIndex(String letter) {
+        switch (letter) {
+            case "A": return 0;
+            case "B": return 1;
+            case "C": return 2;
+            case "D": return 3;
+            case "E": return 4;
+            case "F": return 5;
+            case "G": return 6;
+            case "H": return 7;
+            default: return -1 // This is the case if we get an invalid String
+        }
+    }
     private void display(){
         //print the pairs and penalty val
     }
