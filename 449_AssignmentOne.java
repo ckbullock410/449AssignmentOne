@@ -9,7 +9,12 @@ public class 449_AssignmentOne {
     int minPenalty = 0;
 
     public static void main(String, args[]){  
-        reset(); 
+        for (int j = 0; j < tasks.length; j++){
+            //if task isn't taken make it 1, else make it 0
+            tasks[j] = 0;
+            //unassigned machines have value 0 in them.
+            assignedTasks[j] = 0;
+        }  
 		/*
 		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
 		and store it in 2d arrays
@@ -24,22 +29,13 @@ public class 449_AssignmentOne {
 		forced = tr.forced_partial_assignments;
 
 		tr.printValues();				// Use this to print all of the data to the terminal
-        assignTasks();
-    }
-  
-    private void reset(){
-        for (int j = 0; j < notTakenTasks.length; j++){
-            //if task isn't taken make it 1, else make it 0
-            tasks[j] = 1;
-            //unassigned machines have value 0 in them.
-            assignedTasks[j] = 0;
-        }  
+        loopFunction(0);
     }
 
     public void loopFunction(machineNum){
             /*
             * loop through all 8 tasks for each 8 machines
-            * if machine is already assigned go to next machine
+            * if machine is already partially_assigned go to next machine
             * if task is already assigned continue to next task
         Breaks Constraints
             * if task is forbidden continue to next task
