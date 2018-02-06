@@ -2,75 +2,102 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 
 public class 449_AssignmentOne {
-    int [] partialAssignments = new int[8];     //do these with hashmaps probably
-    int [] forbiddenAssignments = new int[8];
-    int [] tooNearPenalties = new int[8];
-    String[][] pairedMachines = new String[8][2]; // Keeping the machines and their associated tasks in an array with each element
-                                                 // being an array that contains the machine and its task
-    
-    int [][] penaltiesArray = new int[8];       //will need to rearrange this into a tree for branch and bound
-    for (int i = 0; i < 8; i ++){
-        penaltiesArray[i] = new int[8];
-    }
+    int [] tasks = new int[8];
+    int [] assignedTasks = new int[8];
+    int [] currentSolution = new int[8];
+    TaskReader tr;
+    int minPenalty = 0;
 
-    public static void main(String, args[]){
-        readFile(args[1]);
+    public static void main(String, args[]){  
+        reset(); 
+		/*
+		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
+		and store it in 2d arrays
+		*/
+		tr = new TasksReader(args[0]);
+
+		/*
+		The variables can be accessed directly
+		Example:
+        */
+        forbid = tr.forbiden_Machines;
+		forced = tr.forced_partial_assignments;
+
+		tr.printValues();				// Use this to print all of the data to the terminal
         assignTasks();
     }
-    private String compareStr(String x, String y){
-        if (x != y){
-            displayInvalid();
-        } else  {
-            return x;
+  
+    private void reset(){
+        for (int j = 0; j < notTakenTasks.length; j++){
+            //if task isn't taken make it 1, else make it 0
+            tasks[j] = 1;
+            //unassigned machines have value 0 in them.
+            assignedTasks[j] = 0;
+        }  
+    }
+
+    public void loopFunction(machineNum){
+            /*
+            * loop through all 8 tasks for each 8 machines
+            * if machine is already assigned go to next machine
+            * if task is already assigned continue to next task
+        Breaks Constraints
+            * if task is forbidden continue to next task
+            * if task violates too-near constraint continue to next task
+            * 
+        calcPenalty
+            * if current penalty already higher than min penalty found so far, break
+            * if machineNum is 8 and it's in the inner most loop and penalty is least
+            * found so far, store the paired machines and penalty value.
+            *
+            */
+        int penalty;
+        if (machineNum < 8){
+            for (int i = 0; i < 8; i++){
+                if (forced[machineNum] != null){
+                    //put into assignTasks and currentSolution prior to first loopFunction call
+                    loopFunction(machine + 1);
+                }
+                if (tasks[i] != 0){
+                    continue;
+                }
+                if (breaksConstraints()){
+                    continue;
+                }
+                assignedTasks[machineNum] = i;      
+                if (i == 7){
+                    tasks[i] == 0;
+                } else {
+                    tasks[i] = 1;
+                }
+                penalty = calcPenalty();
+                if (penalty > minPenalty){
+                    assignedTasks[machineNum] = 0;
+                    break;
+                }
+                loopFunction(machineNum + 1);
+                //if this combination is a new minimum penalty, store.
+                if (machineNum == 7 && penalty < minPenalty){
+                    for (int j = 0; j < currentSolution.length; j++){                     
+                        currentSolution[j] = assignedTasks[j];
+                    }
+                }
+            }
+        }   
+     }
+    private boolean tasksTaken(){
+        for (int i = 0; i < tasks.length; i++){
+            if (tasks[i] == 0){
+                return false;
+            }
+            return true;
         }
     }
-
-    private String readNewLines(BufferedReader br){
-        String str = br.readLine().replaceAll("\\s", "");
-        while(str == "\n"){
-            str = br.readLine().replaceAll("\\s","");
-        }
-        return str;
+    private boolean breaksConstraints(){
+        // see if the machine task pair breaks constraints in forbidden or too near
     }
 
-    private void readFile(fileName){
-        try{
-            FileReader fr = new FileReader(fileName);
-            BufferedReader br = new BufferedReader(fr);
-        } catch (IOException ioe){
-            System.out.println("error opening file");
-        }
-
-        //See if the first line is "Name:" as the format dictates
-        compareStr(br.readLine().replaceAll("\\s",""), "Name:\n");
-
-        //See if the filename listed under name is indeed the name of the file
-        compareStr(br.readLine().replaceAll("\\s",""), fileName);
-
-        //account for 1 or more new line characters until next section is reached
-        compareStr(readNewLines(br), "forcedpartialassignment:\n");
-        // TO-DO ..... READ PAIRS, NOT SURE HOW FORMATTED YET
-        compareStr(readNewLines(br), "forbiddenmachine:\n");
-        //TO-DO ... Read pairs
-        compareStr(readNewLines(br), "too-neartasks:\n");
-        //TO-DO .. Read pairs
-        compareStr(readNewLines(br), "machinepenalties:\n");
-        //read matrix into the 2d Array penaltiesArray
-
-
-    }
-
-    private void assignTasks(){
-        /*
-        * branch and bound search algorithm
-        *
-        * make a binary search tree for the column or row of the task (loop through machines or tasks for assignment?)
-        *
-        * store pairs of mach, tasks
-        */
-    }
-
-    private void calcPenalties(){
+    private void calcPenalty(){
         /*
         * look at stored pairs and see if they violate hard constraints
         * call display function that prints invalid if appropriate
@@ -78,8 +105,7 @@ public class 449_AssignmentOne {
         * if not invalid call display function
         */
     }
-    
-    // This method will be used to get the indices for the machine-task penalties
+
     private int convertLetterToIndex(String letter) {
         switch (letter) {
             case "A": return 0;
@@ -92,13 +118,5 @@ public class 449_AssignmentOne {
             case "H": return 7;
             default: return -1 // This is the case if we get an invalid String
         }
-    }
-    private void display(){
-        //print the pairs and penalty val
-    }
-
-    private void displayInvalid(){
-        // print invalid etc...
-        System.exit(0);
     }
 }
