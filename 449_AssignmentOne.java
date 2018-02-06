@@ -55,18 +55,23 @@ public class 449_AssignmentOne {
                     loopFunction(machine + 1);
                 }
                 if (tasks[i] != 0){
+                    //if no valid tasks for this machine unasssign task for last machine
+                    if (i == 7){
+                        tasks[assignedTasks[machineNum - 1]] == 0;
+                    }
+                    //continue to next task (or last machine if i == 7)
                     continue;
                 }
                 if (breaksConstraints()){
+                    if (i == 7){
+                        tasks[assignedTasks[machineNum - 1]] == 0;
+                    }
                     continue;
                 }
                 assignedTasks[machineNum] = i;      
-                if (i == 7){
-                    tasks[i] == 0;
-                } else {
-                    tasks[i] = 1;
-                }
+                tasks[i] = 1;
                 penalty = calcPenalty();
+
                 if (penalty > minPenalty){
                     assignedTasks[machineNum] = 0;
                     break;
