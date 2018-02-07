@@ -12,8 +12,8 @@ public class 449_AssignmentOne {
         for (int j = 0; j < tasks.length; j++){
             //if task isn't taken make it 1, else make it 0
             tasks[j] = 0;
-            //unassigned machines have value 0 in them.
-            assignedTasks[j] = 0;
+            //unassigned machines have value -1 in them.
+            assignedTasks[j] = -1;
         }  
 		/*
 		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
@@ -34,6 +34,8 @@ public class 449_AssignmentOne {
 
     public void loopFunction(machineNum){
             /*
+            * need to check that penalties aren't being calculated when there are unassigned machines
+            *
             * loop through all 8 tasks for each 8 machines
             * if machine is already partially_assigned go to next machine
             * if task is already assigned continue to next task
@@ -57,6 +59,7 @@ public class 449_AssignmentOne {
                 if (tasks[i] != 0){
                     //if no valid tasks for this machine unasssign task for last machine
                     if (i == 7){
+                        assignedTasks[machineNum - 1] = -1;
                         tasks[assignedTasks[machineNum - 1]] == 0;
                     }
                     //continue to next task (or last machine if i == 7)
@@ -64,21 +67,24 @@ public class 449_AssignmentOne {
                 }
                 if (breaksConstraints()){
                     if (i == 7){
+                        assignedTasks[machineNum - 1] = -1;
                         tasks[assignedTasks[machineNum - 1]] == 0;
                     }
                     continue;
                 }
+
                 assignedTasks[machineNum] = i;      
                 tasks[i] = 1;
                 penalty = calcPenalty();
 
                 if (penalty > minPenalty){
                     assignedTasks[machineNum] = 0;
+                    tasks[assignedTasks[machineNum - 1]] == 0;
                     break;
                 }
                 loopFunction(machineNum + 1);
                 //if this combination is a new minimum penalty, store.
-                if (machineNum == 7 && penalty < minPenalty){
+                if (machineNum == 7 && penalty < minPenalty && assignedTasks[7] != -1){
                     for (int j = 0; j < currentSolution.length; j++){                     
                         currentSolution[j] = assignedTasks[j];
                     }
@@ -96,15 +102,49 @@ public class 449_AssignmentOne {
     }
     private boolean breaksConstraints(){
         // see if the machine task pair breaks constraints in forbidden or too near
+        for (int i = 0; i < assignedTasks.length; i++){
+            if (){ // task pair in forbidden
+                return false;
+            } 
+            if (i != 7){
+                if(){ //if i, i+1 in too near constraint
+                    return false;
+                }
+            } else {
+                if(){ // task 7, task 0 too near 
+                    return false
+                }
+            }
+        }
+        return true;
     }
 
-    private void calcPenalty(){
+    private int calcPenalty(){
         /*
         * look at stored pairs and see if they violate hard constraints
         * call display function that prints invalid if appropriate
         * lookup penalties for each pair
         * if not invalid call display function
         */
+        int penalty = 0;
+        for (int i = 0; i < assignedTasks.length; i++){
+//look up penalty for machine task combination
+            if(assignedTasks[i] != -1){
+                break;
+            } else {
+                penalty += machine_penalties[i][assignedTasks[i]];
+            }
+//look for too-near penalties
+            if (i != 7){
+                if(){ //if i, i+1 in too near penalty, 
+                    penalty += //val of that penalty
+                }
+            } else {
+                if(){ // task 7, task 0 too near 
+                    penalty += //that penalty
+                }
+            }
+        }
     }
 
     private int convertLetterToIndex(String letter) {
