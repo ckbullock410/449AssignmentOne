@@ -109,7 +109,7 @@ public class TasksReader {
 			}
 			if (machine_penalties.size() != 8) throw new Exception("machine penalty error");
 
-			if (!reader.readLine().equals("too-near penalties:")) throw new Exception("error message that needs title7");
+			if (!reader.readLine().equals("too-near penalities")) throw new Exception("error message that needs title7");
 
 			line = reader.readLine();
 			while ( line != null && (!line.equals("")) ) {
