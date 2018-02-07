@@ -6,6 +6,7 @@ public class 449_AssignmentOne {
     int [] assignedTasks = new int[8];
     int [] currentSolution = new int[8];
     TaskReader tr;
+    SolutionWriter sr;
     int minPenalty = 0;
 
     public static void main(String, args[]){  
@@ -14,22 +15,29 @@ public class 449_AssignmentOne {
             tasks[j] = 0;
             //unassigned machines have value -1 in them.
             assignedTasks[j] = -1;
-        }  
-		/*
-		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
-		and store it in 2d arrays
-		*/
-		tr = new TasksReader(args[0]);
+        }
+	    
+	/*
+	* When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
+	* and store it in 2d arrays
+	*/
+	tr = new TasksReader(args[0]);
 
-		/*
-		The variables can be accessed directly
-		Example:
+	/*
+	The variables can be accessed directly
+	Example:
         */
         forbid = tr.forbiden_Machines;
 		forced = tr.forced_partial_assignments;
 
 		tr.printValues();				// Use this to print all of the data to the terminal
         loopFunction(0);
+	    
+	/* 
+	* When you create the SolutionWriter object, you must pass in the file name and it will output all of the data we analyzed
+	* into the file with the name passed through, or it will output that there was no solution if there is such a case
+	*/
+	sr = new SolutionWriter(args[1]);
     }
 
     public void loopFunction(machineNum){
