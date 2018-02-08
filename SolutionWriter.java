@@ -19,7 +19,7 @@ public class SolutionWriter {
 
   // We will use this method to write to the output file
   public void openOutputFile(String fileName) throws IOException {
-    outputFile = new FileReader(fileName);
+    outputFile = new FileWriter(fileName);
     writer = new BufferedWriter(outputFile);
   }
 
@@ -28,22 +28,25 @@ public class SolutionWriter {
   * so that when the flag is passed through, it will only output that there is no valid solution and int penalties is to be used to output the calculated
   * penalty
   */
-  public void writeToFile(String[][] pair, boolean noSolution, int penalties) throws IOException {
+  public void writeToFile(String[][] pair, boolean noSolution, int quality) throws IOException {
       if (noSolution) {
         writer.append("No valid solution possible!");
         writer.close();
         return;
       }
-      writer.append("Solution:\t")
+      writer.append("Solution: ");
       for (int i = 0; i < pair.length; i++) {
         if (i < pair.length - 1) {
-          writer.append(pair[i][1] + ",\t");
+          writer.append(pair[i][1] + ", ");
         }
         else {
-          writer.append(pair[i][1]);
+          writer.append(pair[i][1] + "; ");
         }
 
       }
+      
+      writer.append("Quality: " + quality);
+      writer.close();
 
     }
 
