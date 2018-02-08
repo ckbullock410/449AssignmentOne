@@ -3,9 +3,9 @@ import java.io.BufferedReader;
 import java.util.*;
 import java.io.IOException;
 
-public class TasksReader {
+public class TaskReader {
 
-	ArrayList<ArrayList<Integer>> forced_partial_assignments = new ArrayList<ArrayList<Integer>>();
+	int [] forced_partial_assignments = new int[8];
 	ArrayList<ArrayList<Integer>> forbidden_Machines = new ArrayList<ArrayList<Integer>>();
 	ArrayList<ArrayList<Integer>> too_near_tasks = new ArrayList<ArrayList<Integer>>();
 	ArrayList<ArrayList<Integer>> machine_penalties = new ArrayList<ArrayList<Integer>>();
@@ -14,11 +14,27 @@ public class TasksReader {
 	Map<String, Integer> taskNames = new HashMap<String, Integer>();
 
 
-	public TasksReader(String fileName) {
-        
+	public TaskReader(String fileName) {
 		readFile(fileName);
+		for (int i = 0; i < forced_partial_assignments.length; i++) {
+			forced_partial_assignments[i] = -1;
+		}
 	}
 
+	private int convertLetterToIndex(String letter) {
+        switch (letter) {
+            case "A": return 0;
+            case "B": return 1;
+            case "C": return 2;
+            case "D": return 3;
+            case "E": return 4;
+            case "F": return 5;
+            case "G": return 6;
+            case "H": return 7;
+            default: return -1; // This is the case if we get an invalid String
+        }
+    }
+	
 	public void readFile(String fileName){
 
 		machineNames.put("1", 0);
@@ -58,9 +74,9 @@ public class TasksReader {
 			String line = reader.readLine();
 			while ( !line.equals("") ) {
 				String [] lineArray = line.substring(1, line.length() - 1).split(",");
-
-				forced_partial_assignments.add(new ArrayList<Integer>(Arrays.asList(
-						machineNames.get(lineArray[0]), taskNames.get(lineArray[1]) ) ));
+				forced_partial_assignments[Integer.parseInt(lineArray[0])] = convertLetterToIndex(lineArray[1]);
+				//forced_partial_assignments.add(new ArrayList<Integer>(Arrays.asList(
+				//		machineNames.get(lineArray[0]), taskNames.get(lineArray[1]) ) ));
 
 				line = reader.readLine();
 
@@ -129,7 +145,7 @@ public class TasksReader {
 
 
 		// Error checking
-		checkForErrors(forced_partial_assignments, true, true);
+		//checkForErrors(forced_partial_assignments, true, true);
 		checkForErrors(forbidden_Machines, false, true);
 		checkForErrors(too_near_tasks, false, true);
 		checkForErrors(too_near_penalties, false, true);
@@ -163,8 +179,8 @@ public class TasksReader {
 	public void printValues() {
 		System.out.println("\n");
 		System.out.println("forced_partial_assignments");
-		for (ArrayList<Integer> index : forced_partial_assignments) {
-			System.out.println(index);
+		for (int i = 0; i < forced_partial_assignments.length; i++) {
+			System.out.println(forced_partial_assignments[i]);
 		}
 		System.out.println("\n");
 		System.out.println("forbidden_Machines");
