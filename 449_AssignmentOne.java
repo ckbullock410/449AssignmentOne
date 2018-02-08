@@ -5,8 +5,9 @@ public class 449_AssignmentOne {
     int [] tasks = new int[8];
     int [] assignedTasks = new int[8];
     int [] currentSolution = new int[8];
+    int [] curPenalties = new int[8];
+    int runningPenalty = 0;
     TaskReader tr;
-    SolutionWriter sr;
     int minPenalty = 0;
 
     public static void main(String, args[]){  
@@ -15,29 +16,23 @@ public class 449_AssignmentOne {
             tasks[j] = 0;
             //unassigned machines have value -1 in them.
             assignedTasks[j] = -1;
-        }
-	    
-	/*
-	* When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
-	* and store it in 2d arrays
-	*/
-	tr = new TasksReader(args[0]);
+        }  
+		/*
+		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
+		and store it in 2d arrays
+		*/
+		tr = new TasksReader(args[0]);
 
-	/*
-	The variables can be accessed directly
-	Example:
+		/*
+		The variables can be accessed directly
+		Example:
         */
         forbid = tr.forbiden_Machines;
 		forced = tr.forced_partial_assignments;
 
-		tr.printValues();				// Use this to print all of the data to the terminal
+		tr.printValues();				// Use this to print all of the data to the terminal JUST TEST
         loopFunction(0);
-	    
-	/* 
-	* When you create the SolutionWriter object, you must pass in the file name and it will output all of the data we analyzed
-	* into the file with the name passed through, or it will output that there was no solution if there is such a case
-	*/
-	sr = new SolutionWriter(args[1]);
+        SolutionWriter = new SolutionWriter(args[1]);
     }
 
     public void loopFunction(machineNum){
@@ -64,26 +59,23 @@ public class 449_AssignmentOne {
                     //put into assignTasks and currentSolution prior to first loopFunction call
                     loopFunction(machine + 1);
                 }
-                if (tasks[i] != 0){
+                if (tasks[i] != 0 || breaksConstraints(machineNume, i)){
                     //if no valid tasks for this machine unasssign task for last machine
                     if (i == 7){
                         assignedTasks[machineNum - 1] = -1;
                         tasks[assignedTasks[machineNum - 1]] == 0;
+                        runningPenalty -= curPenalties[machineNum -1];
                     }
                     //continue to next task (or last machine if i == 7)
                     continue;
                 }
-                if (breaksConstraints()){
-                    if (i == 7){
-                        assignedTasks[machineNum - 1] = -1;
-                        tasks[assignedTasks[machineNum - 1]] == 0;
-                    }
-                    continue;
-                }
+               // arrayList.get(index1).get(index)
 
                 assignedTasks[machineNum] = i;      
                 tasks[i] = 1;
-                penalty = calcPenalty();
+                curPenalties[machineNum] = calcPenalty();
+                runningPenalty += curPenalties[machineNum];
+
 
                 if (penalty > minPenalty){
                     assignedTasks[machineNum] = 0;
@@ -92,14 +84,15 @@ public class 449_AssignmentOne {
                 }
                 loopFunction(machineNum + 1);
                 //if this combination is a new minimum penalty, store.
-                if (machineNum == 7 && penalty < minPenalty && assignedTasks[7] != -1){
-                    for (int j = 0; j < currentSolution.length; j++){                     
+                if (machineNum == 7 && penalty < minPenalty && tasksTaken()){
+                    for (int j = 0; j < currentSolution.length; j++){                    
                         currentSolution[j] = assignedTasks[j];
                     }
                 }
             }
         }   
      }
+    //before storing something as a solution check if there are unassigned tasks
     private boolean tasksTaken(){
         for (int i = 0; i < tasks.length; i++){
             if (tasks[i] == 0){
@@ -108,14 +101,14 @@ public class 449_AssignmentOne {
             return true;
         }
     }
-    private boolean breaksConstraints(){
+
+    private boolean breaksConstraints(int mach, int task){
         // see if the machine task pair breaks constraints in forbidden or too near
-        for (int i = 0; i < assignedTasks.length; i++){
             if (){ // task pair in forbidden
                 return false;
             } 
-            if (i != 7){
-                if(){ //if i, i+1 in too near constraint
+            if (task != 7){
+                if(){ //if task, task+1 in too near constraint
                     return false;
                 }
             } else {
@@ -127,7 +120,7 @@ public class 449_AssignmentOne {
         return true;
     }
 
-    private int calcPenalty(){
+    private int calcPenalty(mach, task){
         /*
         * look at stored pairs and see if they violate hard constraints
         * call display function that prints invalid if appropriate
@@ -135,25 +128,26 @@ public class 449_AssignmentOne {
         * if not invalid call display function
         */
         int penalty = 0;
+        if(assignedTasks[i] != -1){
+            break;
+        } else {
+            penalty += machine_penalties[i][assignedTasks[i]];
+        }
         for (int i = 0; i < assignedTasks.length; i++){
-//look up penalty for machine task combination
-            if(assignedTasks[i] != -1){
-                break;
-            } else {
-                penalty += machine_penalties[i][assignedTasks[i]];
+            //look up penalty for machine task combination
+        }
+        if (i != 7){
+            if(){ //if i, i+1 in too near penalty, 
+                penalty += //val of that penalty
             }
-//look for too-near penalties
-            if (i != 7){
-                if(){ //if i, i+1 in too near penalty, 
-                    penalty += //val of that penalty
-                }
-            } else {
-                if(){ // task 7, task 0 too near 
-                    penalty += //that penalty
-                }
+        } else {
+            if(){ // task 7, task 0 too near 
+                penalty += //that penalty
             }
         }
-    }
+    } 
+//look for too-near penalties
+            
 
     private int convertLetterToIndex(String letter) {
         switch (letter) {
