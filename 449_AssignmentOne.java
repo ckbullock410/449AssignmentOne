@@ -1,5 +1,6 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
+import TaskReader;
 
 public class 449_AssignmentOne {
     int [] tasks = new int[8];
@@ -11,28 +12,19 @@ public class 449_AssignmentOne {
     int minPenalty = 0;
 
     public static void main(String, args[]){  
+        tr = new TasksReader(args[0]);
+        449_AssignmentOne assignment = new 449_AssignmentOne();
+        assignment.init()
+        assignment.loopFunction(0);
+        SolutionWriter = new SolutionWriter(args[1]);
+    }
+    private void init(){
         for (int j = 0; j < tasks.length; j++){
             //if task isn't taken make it 1, else make it 0
             tasks[j] = 0;
             //unassigned machines have value -1 in them.
             assignedTasks[j] = -1;
-        }  
-		/*
-		When you create a TasksReader object, you need to pass in the name of the file and it will parse all of the data
-		and store it in 2d arrays
-		*/
-		tr = new TasksReader(args[0]);
-
-		/*
-		The variables can be accessed directly
-		Example:
-        */
-        forbid = tr.forbiden_Machines;
-		forced = tr.forced_partial_assignments;
-
-		tr.printValues();				// Use this to print all of the data to the terminal JUST TEST
-        loopFunction(0);
-        SolutionWriter = new SolutionWriter(args[1]);
+        }        
     }
 
     public void loopFunction(machineNum){
@@ -55,8 +47,11 @@ public class 449_AssignmentOne {
         int penalty;
         if (machineNum < 8){
             for (int i = 0; i < 8; i++){
-                if (forced[machineNum] != null){
-                    //put into assignTasks and currentSolution prior to first loopFunction call
+                if (tr.forced_partial_assignments[machineNum] != null){
+                    assignedTasks[i] == tr.forced_partial_assignments[i];
+                    tasks[tr.forced_partial_assignments[i]] = 1;
+                    curPenalties[machineNum] = calcPenalty();
+                    runningPenalty += curPenalties[machineNum];
                     loopFunction(machine + 1);
                 }
                 if (tasks[i] != 0 || breaksConstraints(machineNume, i)){
@@ -64,12 +59,12 @@ public class 449_AssignmentOne {
                     if (i == 7){
                         assignedTasks[machineNum - 1] = -1;
                         tasks[assignedTasks[machineNum - 1]] == 0;
-                        runningPenalty -= curPenalties[machineNum -1];
+                        runningPenalty -= curPenalties[machineNum - 1];
+                        curPenalties[machineNum - 1] = 0;
                     }
                     //continue to next task (or last machine if i == 7)
                     continue;
                 }
-               // arrayList.get(index1).get(index)
 
                 assignedTasks[machineNum] = i;      
                 tasks[i] = 1;
@@ -77,7 +72,7 @@ public class 449_AssignmentOne {
                 runningPenalty += curPenalties[machineNum];
 
 
-                if (penalty > minPenalty){
+                if (runningPenalty > minPenalty){
                     assignedTasks[machineNum] = 0;
                     tasks[assignedTasks[machineNum - 1]] == 0;
                     break;
@@ -104,20 +99,28 @@ public class 449_AssignmentOne {
 
     private boolean breaksConstraints(int mach, int task){
         // see if the machine task pair breaks constraints in forbidden or too near
-            if (){ // task pair in forbidden
-                return false;
+            for (int i = 0; i < tr.forbidden_Machines.size(); i++){
+                if (tr.forbidden_Machines.get(i).get(0) == mach &&
+                tr.forbidden_Machines.get(i).get(1) == task){
+                    return true;
+                }
             } 
-            if (task != 7){
-                if(){ //if task, task+1 in too near constraint
-                    return false;
-                }
-            } else {
-                if(){ // task 7, task 0 too near 
-                    return false
-                }
+            if (mach == 0){
+                return false;
             }
+            for (int j = 0; j < tr.too_near_tasks.size(); j++){
+                //see if adding this task to this machine gives you a too near penalty with previous machine
+                if (task != 7 && tr.too_near_tasks.get(j).get(0) == assignedTasks[mach - 1] &&
+                tr.too_near_tasks.get(j).get(1) == assignedTasks[mach]){
+                    penalty += tr.too_near_penalties.get(i).get(3);
+                } 
+                //when you machine is the last one, check the first machine to see if it gives too near penalty
+                else if(task == 7 && tr.too_near_tasks.get(j).get(0) == assignedTasks[mach] &&
+                tr.too_near_tasks.get(j).get(1) == assignedTasks[0]){
+                    penalty += tr.too_near_penalties.get(i).get(3)
+            }            
         }
-        return true;
+        return false;
     }
 
     private int calcPenalty(mach, task){
@@ -127,26 +130,26 @@ public class 449_AssignmentOne {
         * lookup penalties for each pair
         * if not invalid call display function
         */
-        int penalty = 0;
-        if(assignedTasks[i] != -1){
-            break;
-        } else {
-            penalty += machine_penalties[i][assignedTasks[i]];
+        int penalty += tr.machine_penalties.get(task).get(mach); //might be mach first task second
+        if (mach == 0){
+            return penalty;
         }
-        for (int i = 0; i < assignedTasks.length; i++){
-            //look up penalty for machine task combination
-        }
-        if (i != 7){
-            if(){ //if i, i+1 in too near penalty, 
-                penalty += //val of that penalty
+        //loop through too near penalties and see if penalty val needs to be added
+        for (int i = 0; i < tr.too_near_penalties.size(); i++){
+            //see if adding this task to this machine gives you a too near penalty with previous machine
+            if (task != 7 && tr.too_near_penalties.get(i).get(0) == assignedTasks[mach - 1] &&
+            tr.too_near_penalties.get(i).get(1) == assignedTasks[mach]){
+                penalty += tr.too_near_penalties.get(i).get(3);
+            } 
+            //when you machine is the last one, check the first machine to see if it gives too near penalty
+            else if(task == 7 && tr.too_near_penalties.get(i).get(0) == assignedTasks[mach] &&
+            tr.too_near_penalties.get(i).get(1) == assignedTasks[0]){
+                penalty += tr.too_near_penalties.get(i).get(3)
             }
-        } else {
-            if(){ // task 7, task 0 too near 
-                penalty += //that penalty
-            }
         }
-    } 
-//look for too-near penalties
+        return penalty;
+    }
+
             
 
     private int convertLetterToIndex(String letter) {
